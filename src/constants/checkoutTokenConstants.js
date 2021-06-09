@@ -1,0 +1,1 @@
+export const CHECKOUT_TOKEN ='CHECKOUT_TOKEN';
