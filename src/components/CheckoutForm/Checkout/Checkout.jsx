@@ -6,8 +6,13 @@ import PaymentForm from '../PaymentForm'
 import useStyles from './styles'
 import {commerce} from '../../../lib/commerce'
 import {Link} from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { generateCheckoutToken } from '../../../actions/checkoutTokenAction'
 const steps = ["ที่อยู่จัดส่ง","รายละเอียดการชำระเงิน"]
 const Checkout = ({cart,order,onCaptureCheckout,error}) => {
+    const dispatch = useDispatch()
+    const checkoutToken = useSelector(state => state.checkoutToken);
+    const {token} = checkoutToken
     const [activeStep,setActiveStep] = useState(0);
     const [checkoutToken,setCheckoutToken] =useState(null);
     const [shippingData,setShippingData] = useState({})
@@ -15,16 +20,17 @@ const Checkout = ({cart,order,onCaptureCheckout,error}) => {
     const classes = useStyles();
 
     useEffect(() => {
-        const generateToken = async()=>{
-            try{
-                const token = await commerce.checkout.generateToken(cart.id,{type:'cart'})
+        // const generateToken = async()=>{
+        //     try{
+        //         const token = await commerce.checkout.generateToken(cart.id,{type:'cart'})
                
-                setCheckoutToken(token);
-            }catch(err){
-                console.log(err);
-            }
-        }
-        generateToken();
+        //         setCheckoutToken(token);
+        //     }catch(err){
+        //         console.log(err);
+        //     }
+        // }
+        // generateToken();
+        dispatch(generateCheckoutToken(cart.id))
     }, [cart])
 
     const nextStep =()=> setActiveStep((prevActiveStep) => prevActiveStep + 1)
@@ -61,7 +67,11 @@ const Checkout = ({cart,order,onCaptureCheckout,error}) => {
         </>
     }
     const Form = ()=> activeStep === 0 
-        ? <AddressForm cart={cart} checkoutToken={checkoutToken} next={next}/>
+        ? <AddressForm 
+            cart={cart} 
+            checkoutToken={checkoutToken} 
+            next={next}
+        />
         : <PaymentForm shippingData={shippingData} checkoutToken={checkoutToken} nextStep={nextStep} backStep={backStep} onCaptureCheckout={onCaptureCheckout}/>
 
     return (
@@ -77,7 +87,10 @@ const Checkout = ({cart,order,onCaptureCheckout,error}) => {
                                 </Step>
                             ))}
                         </Stepper>
-                        {activeStep === steps.length ? <Confirmation/>: checkoutToken && <Form/>}
+                        {activeStep === steps.length ? <Confirmation/>: 
+                            // checkoutToken
+                            token
+                             && <Form/>}
                     </Paper>
                 </main>
              
