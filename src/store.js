@@ -8,7 +8,7 @@ import { productListReducer } from "./reducers/productReducer";
 const reducer = combineReducers({
     productList:productListReducer,
     cartRetrieve: cartRetrieveReducer,
-    checkoutToken:checkoutTokenReducer
+    checkoutTokenCart:checkoutTokenReducer
 })
 const initialState ={
 

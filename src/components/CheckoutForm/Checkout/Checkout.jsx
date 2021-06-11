@@ -11,8 +11,8 @@ import { generateCheckoutToken } from '../../../actions/checkoutTokenAction'
 const steps = ["ที่อยู่จัดส่ง","รายละเอียดการชำระเงิน"]
 const Checkout = ({cart,order,onCaptureCheckout,error}) => {
     const dispatch = useDispatch()
-    const checkoutToken = useSelector(state => state.checkoutToken);
-    const {token} = checkoutToken
+    const checkoutTokenCart = useSelector(state => state.checkoutTokenCart);
+    const {token} = checkoutTokenCart
     const [activeStep,setActiveStep] = useState(0);
     const [checkoutToken,setCheckoutToken] =useState(null);
     const [shippingData,setShippingData] = useState({})
