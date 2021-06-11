@@ -1,1 +1,1 @@
-export const 
+export const COUNTRIES_REQUEST = 'COUNTRIES_REQUEST'
