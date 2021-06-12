@@ -6,8 +6,13 @@ import { Link } from 'react-router-dom';
 import FormInput from './CustomTextField';
 import dataProvinces from './db.json'
 import { commerce} from '../../lib/commerce'
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCountries, fetchSubdivisionsAc } from '../../actions/formActions';
 
 const AddressForm = ({cart,checkoutToken,next}) => {
+  const dispatch = useDispatch()
+  const formPosition = useSelector(state => state.formPosition);
+  const {loading,countriesRe,country,subdivisionsRe} = formPosition
     const [shippingCountries,setShippingCountries] = useState([])
     const [shippingCountry,setShippingCountry] = useState('')
     const [shippingSubdivisions,setSubdivisions] = useState([])
@@ -114,11 +119,15 @@ const AddressForm = ({cart,checkoutToken,next}) => {
     
     useEffect(() => {
       fetchShippingCountries(checkoutToken.id)
+      dispatch(fetchCountries(checkoutToken.id))
       console.log("address form")
     },[cart])
 
     useEffect(() => {
-      if(shippingCountry) fetchSubdivisions(shippingCountry)
+      if(shippingCountry) {
+        fetchSubdivisions(shippingCountry)
+        dispatch(fetchSubdivisionsAc(shippingCountry))
+      }
     },[shippingCountry])
 
     useEffect(() => {

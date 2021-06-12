@@ -3,12 +3,13 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import { cartRetrieveReducer } from "./reducers/cartReducer";
 import { checkoutTokenReducer } from "./reducers/checkoutTokenReducer";
-
+import { formReducer } from "./reducers/formReducer";
 import { productListReducer } from "./reducers/productReducer";
 const reducer = combineReducers({
     productList:productListReducer,
     cartRetrieve: cartRetrieveReducer,
-    checkoutTokenCart:checkoutTokenReducer
+    checkoutTokenCart:checkoutTokenReducer,
+    formPosition:formReducer
 })
 const initialState ={
 

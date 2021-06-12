@@ -20,16 +20,16 @@ const Checkout = ({cart,order,onCaptureCheckout,error}) => {
     const classes = useStyles();
 
     useEffect(() => {
-        // const generateToken = async()=>{
-        //     try{
-        //         const token = await commerce.checkout.generateToken(cart.id,{type:'cart'})
+        const generateToken = async()=>{
+            try{
+                const token = await commerce.checkout.generateToken(cart.id,{type:'cart'})
                
-        //         setCheckoutToken(token);
-        //     }catch(err){
-        //         console.log(err);
-        //     }
-        // }
-        // generateToken();
+                setCheckoutToken(token);
+            }catch(err){
+                console.log(err);
+            }
+        }
+        generateToken();
         dispatch(generateCheckoutToken(cart.id))
     }, [cart])
 
@@ -69,7 +69,8 @@ const Checkout = ({cart,order,onCaptureCheckout,error}) => {
     const Form = ()=> activeStep === 0 
         ? <AddressForm 
             cart={cart} 
-            checkoutToken={checkoutToken} 
+            // checkoutToken={checkoutToken} 
+            checkoutToken={token}
             next={next}
         />
         : <PaymentForm shippingData={shippingData} checkoutToken={checkoutToken} nextStep={nextStep} backStep={backStep} onCaptureCheckout={onCaptureCheckout}/>
