@@ -7,12 +7,12 @@ import FormInput from './CustomTextField';
 import dataProvinces from './db.json'
 import { commerce} from '../../lib/commerce'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCountries, fetchSubdivisionsAc } from '../../actions/formActions';
+import { fetchCountries, fetchDistricts, fetchSubDistrictRedux, fetchSubdivisionsAc } from '../../actions/formActions';
 
 const AddressForm = ({cart,checkoutToken,next}) => {
   const dispatch = useDispatch()
   const formPosition = useSelector(state => state.formPosition);
-  const {loading,countriesRe,country,subdivisionsRe} = formPosition
+  const {loading,countriesRe,country,subdivisionsRe,subdivisionId,districtName} = formPosition
     const [shippingCountries,setShippingCountries] = useState([])
     const [shippingCountry,setShippingCountry] = useState('')
     const [shippingSubdivisions,setSubdivisions] = useState([])
@@ -94,6 +94,7 @@ const AddressForm = ({cart,checkoutToken,next}) => {
       setSubdivisions(subdivisions)
       
       setShippingSubdivision(Object.keys(subdivisions)[0])
+      console.log(Object.keys(subdivisions)[0])
       
     }
     
@@ -135,11 +136,15 @@ const AddressForm = ({cart,checkoutToken,next}) => {
        const province = subdivisions.find(sub => sub.id == shippingSubdivision)
        fetchDistrict(province.name)
       }
+      if(subdivisionId) dispatch(fetchDistricts())
       
       // console.log(province);
       if(shippingSubdivision) fetchShippingOptions(checkoutToken.id,shippingCountry,shippingSubdivision)
      
-    },[shippingSubdivision])
+    },[
+      // shippingSubdivision,
+      subdivisionId
+    ])
 
     useEffect(async()=>{
         if(district) {
@@ -148,8 +153,13 @@ const AddressForm = ({cart,checkoutToken,next}) => {
           await fetchSubDistrict(province.name,dist.label)
           console.log("change");
         }
+        if(districtName) dispatch(fetchSubDistrictRedux())
       
-    },[district,nameDistrict])
+    },[
+        // district,
+        // nameDistrict,
+        districtName
+    ])
     
     // console.log(thDistricts);
     // console.log(district);
@@ -166,6 +176,7 @@ const AddressForm = ({cart,checkoutToken,next}) => {
                     <FormInput name="address1" label="ที่อยู่" />
                     <FormInput name="tel" label="เบอร์มือถือ" />
                     <FormInput name="zip" label="รหัสไปรษณีย์" />
+                    
                     <Grid item xs={12} sm={6}>
                       <InputLabel>เขต/อำเภอ</InputLabel>
                       <Select value={district} fullWidth onChange={(e)=> handleSelectDistrict(e.target.value)}>
@@ -210,6 +221,7 @@ const AddressForm = ({cart,checkoutToken,next}) => {
                       </Select>
                     </Grid>
                 </Grid>
+              
                 <br/>
                 <div style={{display: 'flex',justifyContent: 'space-between'}}>
                     <Button component={Link} to="/cart" variant="outlined">Back to Cart</Button>
