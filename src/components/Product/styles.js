@@ -1,6 +1,7 @@
+
 import {makeStyles} from '@material-ui/core/styles';
 
-export default makeStyles(()=>({
+export default makeStyles((theme)=>({
     root:{
         maxWidth: '100%'
     },
@@ -15,5 +16,17 @@ export default makeStyles(()=>({
     cardContent:{
         display: 'flex',
         justifyContent: 'space-between'
-    }
+    },
+    wrapper:{
+        position:'relative',
+        // margin: theme.spacing(1)
+    },
+    fabProgress: {
+        
+        position: 'absolute',
+        top: 2,
+        left:3,
+    
+        zIndex: 2,
+      }
 }))

@@ -13,5 +13,12 @@ export default makeStyles((theme)=>({
     },
     title:{
         textAlign: 'center'
-    }
+    },
+    spinner: {
+        display: 'flex',
+        minHeight:'100vh',
+        flexGrow:1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
 }))

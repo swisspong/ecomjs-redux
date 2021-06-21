@@ -7,3 +7,7 @@ export const CART_ADD_SUCCESS = 'CART_ADD_SUCCESS';
 export const CART_REMOVE = 'CART_REMOVE';
 
 export const CART_UPDATE = 'CART_UPDATE';
+
+export const REFRESH_CART = 'REFRESH_CART';
+
+export const EMPTY_CART = 'EMPTY_CART';

@@ -4,37 +4,29 @@ import React, { useEffect, useState } from 'react'
 import AddressForm from '../AddressForm'
 import PaymentForm from '../PaymentForm'
 import useStyles from './styles'
-import {commerce} from '../../../lib/commerce'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { generateCheckoutToken } from '../../../actions/checkoutTokenAction'
-const steps = ["ที่อยู่จัดส่ง","รายละเอียดการชำระเงิน"]
-const Checkout = ({cart,order,onCaptureCheckout,error}) => {
+const steps = ["ที่อยู่จัดส่ง", "รายละเอียดการชำระเงิน"]
+const Checkout = () => {
     const dispatch = useDispatch()
     const checkoutTokenCart = useSelector(state => state.checkoutTokenCart);
-    const {token} = checkoutTokenCart
-    const [activeStep,setActiveStep] = useState(0);
-    const [checkoutToken,setCheckoutToken] =useState(null);
-    const [shippingData,setShippingData] = useState({})
-    const [setErrors,errors] = useState("")
+    const { token } = checkoutTokenCart
+    const checkout = useSelector(state => state.checkout)
+    const { order,error } = checkout
+
+    const cartRetrieve = useSelector(state => state.cartRetrieve);
+    const {cart} = cartRetrieve
+
+    const [activeStep, setActiveStep] = useState(0);
+    const [shippingData, setShippingData] = useState({})
     const classes = useStyles();
-
     useEffect(() => {
-        const generateToken = async()=>{
-            try{
-                const token = await commerce.checkout.generateToken(cart.id,{type:'cart'})
-               
-                setCheckoutToken(token);
-            }catch(err){
-                console.log(err);
-            }
-        }
-        generateToken();
         dispatch(generateCheckoutToken(cart.id))
-    }, [cart])
+    }, [cart, dispatch])
 
-    const nextStep =()=> setActiveStep((prevActiveStep) => prevActiveStep + 1)
-    const backStep =()=> setActiveStep((prevActiveStep) => prevActiveStep - 1)
+    const nextStep = () => setActiveStep((prevActiveStep) => prevActiveStep + 1)
+    const backStep = () => setActiveStep((prevActiveStep) => prevActiveStep - 1)
 
     const next = (data) => {
         setShippingData(data)
@@ -42,59 +34,49 @@ const Checkout = ({cart,order,onCaptureCheckout,error}) => {
         nextStep()
     }
 
-    const Confirmation = () => order.customer ?(
+    const Confirmation = () => order.customer ? (
         <>
             <div>
                 <Typography variant='h5'>Thank you for your pruchase,{order.customer.firstname} {order.customer.lastname}</Typography>
-                <Divider className={classes.divider}/>
+                <Divider className={classes.divider} />
                 <Typography variant='subtitle2'>Order ref: {order.customer_reference}</Typography>
             </div>
-            <br/>
+            <br />
             <Button component={Link} to="/" variant='outlined' type="button">Back to Home</Button>
         </>
 
-    ):(
+    ) : (
         <div className={classes.spinner}>
-            <CircularProgress/>
+            <CircularProgress />
         </div>
     )
-    console.log(shippingData);
-    if(error){
+    if (error) {
         <>
             <Typography variant='h5'>Error: {error}</Typography>
-            <br/>
+            <br />
             <Button component={Link} to="/" variant='outlined' type="button">Back to Home</Button>
         </>
     }
-    const Form = ()=> activeStep === 0 
-        ? <AddressForm 
-            cart={cart} 
-            // checkoutToken={checkoutToken} 
-            checkoutToken={token}
-            next={next}
-        />
-        : <PaymentForm shippingData={shippingData} checkoutToken={checkoutToken} nextStep={nextStep} backStep={backStep} onCaptureCheckout={onCaptureCheckout}/>
+    const Form = () => activeStep === 0
+        ? <AddressForm next={next} />
+        : <PaymentForm shippingData={shippingData} nextStep={nextStep} backStep={backStep} />
 
     return (
         <>
-            <div className={classes.toolbar}/>
+            <div className={classes.toolbar} />
             <main className={classes.layout}>
                 <Paper className={classes.paper}>
                     <Typography variant="h4" align="center">Checkout</Typography>
-                        <Stepper activeStep={activeStep} className={classes.stepper}>
-                           {steps.map(step =>(
-                                <Step key={step}>
-                                    <StepLabel>{step}</StepLabel>
-                                </Step>
-                            ))}
-                        </Stepper>
-                        {activeStep === steps.length ? <Confirmation/>: 
-                            // checkoutToken
-                            token
-                             && <Form/>}
-                    </Paper>
-                </main>
-             
+                    <Stepper activeStep={activeStep} className={classes.stepper}>
+                        {steps.map(step => (
+                            <Step key={step}>
+                                <StepLabel>{step}</StepLabel>
+                            </Step>
+                        ))}
+                    </Stepper>
+                    {activeStep === steps.length ? <Confirmation /> : token && <Form />}
+                </Paper>
+            </main>
         </>
     )
 }
