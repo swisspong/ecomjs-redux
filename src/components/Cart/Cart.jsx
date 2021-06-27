@@ -11,6 +11,8 @@ const Cart = () => {
     const classes = useStyles();
     const cartRetrieve = useSelector(state => state.cartRetrieve);
     const {cart} = cartRetrieve
+    
+    
     const EmptyCart = () =>(
         <Typography variant="subtitle1">ไม่มีสินค้าในตระกร้าของคุณ, 
             <Link to="/" className={classes.link}>เลือกซื้อสินค้า</Link>

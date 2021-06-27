@@ -48,6 +48,7 @@ const PaymentForm = ({shippingData,backStep,nextStep}) => {
                 }
             }
             console.log(orderData);
+            console.log(token.live.line_items)
             dispatch(captureCheckout(token.id,orderData));
             nextStep()
         }

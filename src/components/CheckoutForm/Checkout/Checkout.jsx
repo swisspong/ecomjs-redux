@@ -3,20 +3,37 @@ import { Button, CircularProgress, Divider, Paper, Step, StepLabel, Stepper, Typ
 import React, { useEffect, useState } from 'react'
 import AddressForm from '../AddressForm'
 import PaymentForm from '../PaymentForm'
+import ModalError from '../../Modal/ModalError'
 import useStyles from './styles'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { generateCheckoutToken } from '../../../actions/checkoutTokenAction'
+import { removeItem } from '../../../actions/cartActions'
+import SweetAlert2 from 'react-sweetalert2';
+import Swal from 'sweetalert2'
+import { useHistory } from "react-router-dom";
 const steps = ["ที่อยู่จัดส่ง", "รายละเอียดการชำระเงิน"]
 const Checkout = () => {
+    const history = useHistory()
     const dispatch = useDispatch()
     const checkoutTokenCart = useSelector(state => state.checkoutTokenCart);
     const { token } = checkoutTokenCart
     const checkout = useSelector(state => state.checkout)
-    const { order,error } = checkout
+    const { order, error, errors } = checkout
 
+    // const SweetAlert = withSwalInstance(Swal);
+    const [swalProps, setSwalProps] = useState({
+        show: true,
+        icon: 'error',
+        title: 'Oops...',
+        text: 'จำนวนสินค้ามีไม่เพียงพอ',
+        allowOutsideClick: false,
+        showCloseButton: false,
+        confirmButtonText: `กลับไปที่หน้าหลักเพื่อเลือกจำนวนสินค้าใหม่`,
+        focusConfirm: true,
+    });
     const cartRetrieve = useSelector(state => state.cartRetrieve);
-    const {cart} = cartRetrieve
+    const { cart } = cartRetrieve
 
     const [activeStep, setActiveStep] = useState(0);
     const [shippingData, setShippingData] = useState({})
@@ -25,16 +42,29 @@ const Checkout = () => {
         dispatch(generateCheckoutToken(cart.id))
     }, [cart, dispatch])
 
+    useEffect(() => {
+
+        if (error) {
+            // const textE = Object.keys(errors.errors)
+            // const id = textE.map((text) => text.split('.')[1])
+            // console.log(id)
+
+            // console.log(textE[0].split('.')[1])
+            // const id = textE[0].split('.')[1]
+
+            // dispatch(removeItem(id))
+        }
+    }, [dispatch, error])
+
     const nextStep = () => setActiveStep((prevActiveStep) => prevActiveStep + 1)
     const backStep = () => setActiveStep((prevActiveStep) => prevActiveStep - 1)
 
     const next = (data) => {
         setShippingData(data)
-
         nextStep()
     }
 
-    const Confirmation = () => order.customer ? (
+    let Confirmation = () => order.customer ? (
         <>
             <div>
                 <Typography variant='h5'>Thank you for your pruchase,{order.customer.firstname} {order.customer.lastname}</Typography>
@@ -51,11 +81,15 @@ const Checkout = () => {
         </div>
     )
     if (error) {
-        <>
-            <Typography variant='h5'>Error: {error}</Typography>
-            <br />
-            <Button component={Link} to="/" variant='outlined' type="button">Back to Home</Button>
-        </>
+        Confirmation = () => (
+            <>
+                <Typography variant='h5'>เกิดข้อผิดพลาด: {error === "The given data was invalid." ? "สินค้ามีจำนวนจำกัด" : error }</Typography>
+                <br />
+                <Button component={Link} to="/" variant='outlined' type="button">Back to Home</Button>
+                {errors.length !== 0 && (<SweetAlert2 {...swalProps} onConfirm={() => history.push('/')}/>)}
+                
+            </>
+        )
     }
     const Form = () => activeStep === 0
         ? <AddressForm next={next} />

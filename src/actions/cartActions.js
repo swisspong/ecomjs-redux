@@ -18,6 +18,7 @@ export const addToCart = (productId,quantity) => async (dispatch) => {
 }
 export const removeItem = (productId) => async (dispatch) => {
     const {cart} = await commerce.cart.remove(productId);
+    console.log(cart)
     dispatch({type:CART_REMOVE,payload:cart})
 }
 export const updateItem = (productId, quantity) => async (dispatch) => {
@@ -26,6 +27,7 @@ export const updateItem = (productId, quantity) => async (dispatch) => {
 }
 
 export const refreshCartRedux = () => async (dispatch) => {
+    console.log("refresh")
     const newCart = await commerce.cart.refresh()
     dispatch({type:REFRESH_CART,payload:newCart})
 }
