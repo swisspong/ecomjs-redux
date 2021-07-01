@@ -20,7 +20,7 @@ const Checkout = () => {
     const { token } = checkoutTokenCart
     const checkout = useSelector(state => state.checkout)
     const { order, error, errors } = checkout
-
+    console.log(process.env.REACT_APP_CHEC_PUBLIC_KEY)
     // const SweetAlert = withSwalInstance(Swal);
     const [swalProps, setSwalProps] = useState({
         show: true,

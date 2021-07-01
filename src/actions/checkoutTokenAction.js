@@ -3,6 +3,7 @@ import { commerce } from "../lib/commerce"
 
 export const generateCheckoutToken = (cartId)=>async (dispatch ) => {
     dispatch({type: CHECKOUT_TOKEN_REQUEST})
-    const token = await commerce.checkout.generateToken(cartId,{type:'cart'})
+    // const token = await commerce.checkout.generateToken(cartId,{type:'cart'})
+    const token = await commerce.checkout.generateTokenFrom('cart', cartId)
     dispatch({type:CHECKOUT_TOKEN_SUCCESS,payload:token})
 }
